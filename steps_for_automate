@@ -1,0 +1,96 @@
+0.1 check enough disk space on /usr partition  15gb 
+
+0.2. check enough disk space on /var/lib/leapp  15gb
+
+
+1. revisar que no esten montados los discos de dynatrace |desmontar discos que no sean del sistema.
+
+		pq sino sale device busy.
+		
+2- revisar si todas las particiones están compartidas.
+
+findmnt -o TARGET,PROPAGATION
+
+
+[root@rhel leapp]# findmnt -o TARGET,PROPAGATION
+TARGET                                PROPAGATION
+/                                     shared
+├─/sys                                shared
+│ ├─/sys/kernel/security              shared
+│ ├─/sys/fs/cgroup                    shared
+│ │ ├─/sys/fs/cgroup/systemd          shared
+│ │ ├─/sys/fs/cgroup/pids             shared
+│ │ ├─/sys/fs/cgroup/cpuset           shared
+│ │ ├─/sys/fs/cgroup/net_cls,net_prio shared
+│ │ ├─/sys/fs/cgroup/cpu,cpuacct      shared
+│ │ ├─/sys/fs/cgroup/freezer          shared
+│ │ ├─/sys/fs/cgroup/hugetlb          shared
+│ │ ├─/sys/fs/cgroup/blkio            shared
+│ │ ├─/sys/fs/cgroup/memory           shared
+│ │ ├─/sys/fs/cgroup/devices          shared
+│ │ └─/sys/fs/cgroup/perf_event       shared
+│ ├─/sys/fs/pstore                    shared
+│ ├─/sys/kernel/config                shared
+│ ├─/sys/fs/selinux                   shared
+│ └─/sys/kernel/debug                 shared
+├─/proc                               shared
+│ └─/proc/sys/fs/binfmt_misc          shared
+│   └─/proc/sys/fs/binfmt_misc        shared
+├─/dev                                shared
+│ ├─/dev/shm                          shared
+│ ├─/dev/pts                          shared
+│ ├─/dev/hugepages                    shared
+│ └─/dev/mqueue                       shared
+├─/run                                shared
+│ └─/run/user/0                       shared
+├─/boot                               shared
+├─/opt/dynatrace                      shared
+├─/var/log/dynatrace                  shared
+├─/var/lib/dynatrace                  shared
+
+
+si no estan en shared cambiar usando esto
+
+
+mount --make-shared /
+mount --make-shared /sys
+mount --make-shared /proc
+mount --make-shared /dev
+
+2.2 
+mount | grep selinux
+[root@rhel leapp]# mount | grep selinux
+selinuxfs on /sys/fs/selinux type selinuxfs (rw,relatime)
+[root@rhel leapp]# 
+
+
+
+
+3- revisar que el selinux esté en permissive
+
+
+4- revisar el answerfile
+
+
+
+5. grep -ir 'Error' /var/log/leapp/leapp-upgrade.log
+   grep -ir 'Failed to' /var/log/leapp/leapp-upgrade.log
+   
+
+6. Warning: Package marked by Leapp to upgrade not found in repositories metadat
+
+
+
+
+7- 
+2025-05-22 17:37:40.89  DEBUG    PID: 27716 leapp.workflow.FactsCollection.authselect_scanner: Failed to get unit file state for ypbind.service: No such file or directory
+
+8- erimPreparation.dnf_dry_run: rm: cannot remove ���/var/lib/leapp/scratch/mounts/root_/system_overlay/var/lib/leapp���: Device or resource busy
+
+
+9.
+Failed to create directory /var/lib/l
+
+
+
+
